@@ -119,6 +119,9 @@ def current_tab():
     return {"targetId": t.get("targetId"), "url": t.get("url", ""), "title": t.get("title", "")}
 
 def switch_tab(target_id):
+    # Remove 🟢 from old tab
+    try: cdp("Runtime.evaluate", expression="if(document.title.startsWith('\U0001F7E2 '))document.title=document.title.slice(2)")
+    except Exception: pass
     cdp("Target.activateTarget", targetId=target_id)
     sid = cdp("Target.attachToTarget", targetId=target_id, flatten=True)["sessionId"]
     _send({"meta": "set_session", "session_id": sid})
